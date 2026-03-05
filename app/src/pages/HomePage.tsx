@@ -13,13 +13,20 @@ export async function loader() {
   );
   return null;
 }
+
 export function Component() {
   const { data: genres, isSuccess } = useGetGenresQuery(MEDIA_TYPE.Movie);
 
   if (isSuccess && genres && genres.length > 0) {
     return (
       <Stack spacing={2}>
+        {/* CI/CD TEST TEXT */}
+        <h1 style={{ color: "white", textAlign: "center" }}>
+          DevOps CI/CD Pipeline Working 🚀
+        </h1>
+
         <HeroSection mediaType={MEDIA_TYPE.Movie} />
+
         {[...COMMON_TITLES, ...genres].map((genre: Genre | CustomGenre) => (
           <SliderRowForGenre
             key={genre.id || genre.name}
@@ -30,6 +37,7 @@ export function Component() {
       </Stack>
     );
   }
+
   return null;
 }
 
