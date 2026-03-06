@@ -3,11 +3,11 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-    steps {
-        git branch: 'main', url: 'https://github.com/pranavkaranam55/DevopsNetflixProject.git'
-    }
-}
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/pranavkaranam55/DevopsNetflixProject.git'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -15,13 +15,31 @@ pipeline {
             }
         }
 
-        stage('Run Container') {
+        stage('Remove Old Container') {
             steps {
-                sh 'docker stop netflix-container || true'
-                sh 'docker rm netflix-container || true'
+                sh 'docker rm -f netflix-container || true'
+            }
+        }
+
+        stage('Run Netflix Container') {
+            steps {
                 sh 'docker run -d -p 3001:3000 --name netflix-container netflix-app'
             }
         }
 
+        stage('Start Monitoring Stack') {
+            steps {
+                sh 'cd monitoring && docker compose up -d'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ CI/CD Pipeline with Monitoring Completed Successfully'
+        }
+        failure {
+            echo '❌ Pipeline Failed'
+        }
     }
 }
